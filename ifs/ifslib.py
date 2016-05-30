@@ -7,4 +7,4 @@ def init_ifs(comm):
     if(rank==0):
         size=comm.Get_size()
         print "ifs model contains",size,"processes"
-    print "Hello this is ifs proc",rank
+    print "this is ifs process",rank
