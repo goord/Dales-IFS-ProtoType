@@ -6,3 +6,4 @@ Usage:
 * Install mpi4py
 * In dales, do: mpiexec -n x python dales.py, where x denotes the number of parallel processes
 * In ifs, do: mpiexec -n x python ifs.py, where x denotes the number of parallel processes
+* In src, do: mpiexec -n 24 python coupler.py
