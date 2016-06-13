@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# This is a prototype coupling code.
+
 from mpi4py import MPI
 import sys
 
