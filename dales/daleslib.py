@@ -13,7 +13,7 @@ def init_dales(comm,n):
 def do_dales_step():
     sleep(5)
 
-def finalize_dales(comm):
+def finalize_dales(comm,n):
     rank=comm.Get_rank()
     if(rank==0):
-        print "finalizing dales model",rank
+        print "finalizing dales model",n

@@ -34,6 +34,15 @@ if(rank<ifsprocs):
 
     #Inialization:
     init_ifs(comm)
+
+    # comm.Barrier()
+    MPI.COMM_WORLD.Barrier()
+
+    if(rank==0):
+        print "BARRIER SYNCHRONIZATION"
+
+    # comm.Barrier()
+    MPI.COMM_WORLD.Barrier()
     
     # Cleanup:
     finalize_ifs(comm)
@@ -46,8 +55,14 @@ else:
     # Initialization:
     init_dales(comm,dalesindex)
 
+    # comm.Barrier()
+    MPI.COMM_WORLD.Barrier()
+
+    # comm.Barrier()
+    MPI.COMM_WORLD.Barrier()
+
     # Cleanup:
-    finalize_dales(comm)
+    finalize_dales(comm,dalesindex)
 
     comm.Free()
     
