@@ -9,14 +9,14 @@ import sys
 sys.path.insert(0,'../ifs')
 sys.path.insert(0,'../dales')
 
-from ifslib import init_ifs,finalize_ifs
-from daleslib import init_dales,finalize_dales
+from ifslib import init_ifs,finalize_ifs, do_ifs_step
+from daleslib import init_dales,finalize_dales, do_dales_step
 
 ifsprocs=4
 dalesprocs=5
 dalesinst=4
-dalessteps=100
-ifssteps=10
+dalessteps=10
+ifssteps=3
 
 size=MPI.COMM_WORLD.Get_size()
 rank=MPI.COMM_WORLD.Get_rank()
@@ -35,17 +35,25 @@ if(rank<ifsprocs):
     #Inialization:
     init_ifs(comm)
 
-    # comm.Barrier()
+    # Global barrier to start time stepping:
     MPI.COMM_WORLD.Barrier()
+    
+    for i in range(0,ifssteps):
+        # IFS starts first stepping:
+        if(rank==0):
+            print "Performing ifs step",i
+        do_ifs_step()
 
-    if(rank==0):
-        print "BARRIER SYNCHRONIZATION"
+        # Barrier to synchronize dales models time stepping:
+        MPI.COMM_WORLD.Barrier()
 
-    # comm.Barrier()
-    MPI.COMM_WORLD.Barrier()
+        # Barrier to wait for the dales models to finish their time steps:
+        MPI.COMM_WORLD.Barrier()
     
     # Cleanup:
     finalize_ifs(comm)
+    comm.Free()
+
 else:
     # Dales processes
     drank=rank-ifsprocs
@@ -55,14 +63,23 @@ else:
     # Initialization:
     init_dales(comm,dalesindex)
 
-    # comm.Barrier()
+    # Barrier to start looping:
     MPI.COMM_WORLD.Barrier()
 
-    # comm.Barrier()
-    MPI.COMM_WORLD.Barrier()
+    for i in range(0,ifssteps):
+
+        # Barrier to wait for IFS to finish its time step:
+        MPI.COMM_WORLD.Barrier()
+
+        for j in range(0,dalessteps):
+            if(drank%dalesprocs==0):
+                print "Performing step",j+i*dalessteps,"for dales model",dalesindex
+            do_dales_step()
+
+        # Barrier to synchronize dales models:
+        MPI.COMM_WORLD.Barrier()
 
     # Cleanup:
     finalize_dales(comm,dalesindex)
-
     comm.Free()
     

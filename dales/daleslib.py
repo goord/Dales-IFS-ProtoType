@@ -11,7 +11,7 @@ def init_dales(comm,n):
     print "this is dales model",n,"process",rank
 
 def do_dales_step():
-    sleep(5)
+    sleep(1)
 
 def finalize_dales(comm,n):
     rank=comm.Get_rank()
